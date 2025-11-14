@@ -3,49 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Título do Painel -->
     <title>BSC Advogados - Painel de Cobrança</title>
-    <!-- Requisito Técnico: Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Requisito Técnico: Chart.js via CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        /* Importando as fontes da BSC (Merriweather para títulos, Inter para o corpo) */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&display=swap');
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8f9fa; /* Um cinza muito claro */
+            background-color: #f8f9fa; 
         }
-        
-        /* Fontes da BSC */
-        h1, h2, h3 {
-            font-family: 'Merriweather', serif;
-        }
-
-        /* Cores da BSC (Verde Escuro e Dourado) */
+        h1, h2, h3 { font-family: 'Merriweather', serif; }
         :root {
             --cor-verde-bsc: #00332c;
             --cor-dourado-bsc: #c3a177;
         }
-
-        /* Estilo das Abas (Requisito Funcional 2) */
         .tab-button {
             transition: all 0.3s ease;
             border-bottom-width: 4px;
             border-color: transparent;
-            color: #6b7280; /* Cinza para inativo */
+            color: #6b7280;
             cursor: pointer;
         }
         .tab-button.active {
             font-weight: 600;
-            color: var(--cor-verde-bsc); /* Verde para ativo */
-            border-color: var(--cor-dourado-bsc); /* Dourado para sublinhado */
+            color: var(--cor-verde-bsc);
+            border-color: var(--cor-dourado-bsc);
         }
-
-        /* Container dos Gráficos */
         .chart-container {
             position: relative;
             width: 100%;
@@ -54,8 +40,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
-        /* Estilos da Tabela (Requisito Funcional 3 - Aba 2) */
         .cobranca-table {
             width: 100%;
             border-collapse: collapse;
@@ -66,21 +50,22 @@
             border: 1px solid #ddd;
             padding: 10px 12px;
             text-align: left;
-            white-space: nowrap; /* Impede que o texto quebre linha */
+            white-space: nowrap; 
         }
         .cobranca-table th {
-            background-color: var(--cor-verde-bsc); /* Fundo verde escuro */
-            color: white; /* Texto branco */
+            background-color: var(--cor-verde-bsc);
+            color: white;
             font-weight: 600;
             position: sticky;
             top: 0;
+            z-index: 10;
         }
         .cobranca-table tbody tr:nth-child(even) {
             background-color: #f9f9f9;
         }
         .table-container {
             width: 100%;
-            overflow-x: auto; /* Rolagem horizontal */
+            overflow-x: auto; 
             border-radius: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
@@ -88,10 +73,8 @@
 </head>
 <body class="bg-zinc-50 text-gray-800 antialiased">
 
-    <!-- Requisito Técnico: Estrutura em um único arquivo -->
     <div class="container mx-auto p-4 md:p-8 max-w-7xl">
         
-        <!-- Requisito Funcional 1: Header (Cabeçalho) -->
         <header class="flex flex-col md:flex-row justify-between items-center mb-6 pb-6 border-b-2" style="border-color: var(--cor-dourado-bsc);">
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold" style="color: var(--cor-verde-bsc);">
@@ -99,11 +82,9 @@
                 </h1>
                 <p class="text-xl text-gray-600">BSC Advogados e Associados</p>
             </div>
-            <!-- A logo "BSC-1.jpg" deve estar no mesmo repositório -->
             <img src="BSC-1.jpg" alt="Logo BSC Advogados" class="w-48 h-auto mt-4 md:mt-0">
         </header>
 
-        <!-- Requisito Funcional 2: Navegação por Abas -->
         <nav class="mb-10">
             <div class="flex justify-center border-b border-gray-300">
                 <button id="btn-dashboard" class="tab-button active py-3 px-6 text-lg">
@@ -116,9 +97,7 @@
         </nav>
 
         <main>
-            <!-- Requisito Funcional 3: Aba 1 (Dashboard) -->
             <div id="tab-dashboard" class="tab-content space-y-8">
-                <!-- KPIs (Indicadores) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-lg text-center">
                         <h3 class="text-2xl font-semibold text-gray-700 mb-2">Valor Total (Atualizado)</h3>
@@ -133,9 +112,7 @@
                         <p class="text-4xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-ajuizados">0</p>
                     </div>
                 </div>
-
-                <!-- Gráficos -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Status de Ajuizamento</h2>
                         <div class="chart-container">
@@ -151,14 +128,13 @@
                 </div>
             </div>
 
-            <!-- Requisito Funcional 3: Aba 2 (Tabela Detalhada) -->
             <div id="tab-tabela" class="tab-content hidden">
                 <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
                     Abaixo está o status detalhado das ações de cobrança em andamento.
                 </p>
                 <div class="table-container bg-white">
                     <div id="tabela-placeholder">
-                        <p class="text-center p-10 text-gray-500">Carregando dados da planilha...</p>
+                        <p class="text-center p-10 text-gray-500">Carregando dados...</p>
                     </div>
                 </div>
             </div>
@@ -166,81 +142,281 @@
 
     </div>
 
-    <!-- Requisito Técnico: JavaScript para carregar dados (fetch) e controlar abas -->
     <script>
-        // IDs das abas
+        // --- [ ESTA É A CORREÇÃO PRINCIPAL ] ---
+        // Os dados da sua planilha (o JSON) estão agora DENTRO do JavaScript.
+        // Não precisamos mais de 'fetch()' ou 'cobranca_data.json'.
+        // ESTA É A VERSÃO COMPLETA QUE NÃO FOI CORTADA.
+        const dadosDaPlanilha = [
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Gilvan Domingues",
+            "Título": "Promissória",
+            "Vencimento": "2024-06-29",
+            "Prescrição/Ex.": "2028-06-16",
+            "Ação": "Execução",
+            "Vlr. Original": "R$ 53.000,00",
+            "Vlr. Débito": "R$ 49.000,00",
+            "Vlr. Atualizado": "R$ 59.417,08",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2025-06-16",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "Eliene Silva",
+            "Título": "Contrato",
+            "Vencimento": "2021-07-20",
+            "Prescrição/Ex.": "N/A",
+            "Ação": "Execução",
+            "Vlr. Original": "R$ 12.000,00",
+            "Vlr. Débito": "R$ 60.720,00",
+            "Vlr. Atualizado": "R$ 60.720,00",
+            "Protesto": "Sim",
+            "Dt. Protesto": "N/A",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "JBJ Casa Carnes",
+            "Título": "Cheques",
+            "Vencimento": "2025-02-03",
+            "Prescrição/Ex.": "2025-08-03",
+            "Ação": "Locupletamento",
+            "Vlr. Original": "R$ 35.280,00",
+            "Vlr. Débito": "R$ 35.280,00",
+            "Vlr. Atualizado": "R$ 39.276,69",
+            "Protesto": "Não",
+            "Dt. Protesto": "N/A",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Leidiane Nere",
+            "Título": "Cheques",
+            "Vencimento": "2022-07-14",
+            "Prescrição/Ex.": "2023-01-14",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 5.129,00",
+            "Vlr. Débito": "R$ 5.129,00",
+            "Vlr. Atualizado": "R$ 8.009,08",
+            "Protesto": "Não",
+            "Dt. Protesto": "N/A",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "Jorge Bonfim",
+            "Título": "Promissória",
+            "Vencimento": "2023-04-16",
+            "Prescrição/Ex.": "2026-04-24",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 5.596,00",
+            "Vlr. Débito": "R$ 5.596,00",
+            "Vlr. Atualizado": "R$ 7.997,33",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2023-04-27",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "João Benavides",
+            "Título": "Cheques",
+            "Vencimento": "2023-08-22",
+            "Prescrição/Ex.": "3026-10-30",
+            "Ação": "Locupletamento",
+            "Vlr. Original": "R$ 1.650,00",
+            "Vlr. Débito": "R$ 1.650,00",
+            "Vlr. Atualizado": "R$ 2.269,59",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2023-10-30",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Edjane Melo",
+            "Título": "Cheques",
+            "Vencimento": "2023-10-13",
+            "Prescrição/Ex.": "2027-10-04",
+            "Ação": "Locupletamento",
+            "Vlr. Original": "R$ 11.000,00",
+            "Vlr. Débito": "R$ 11.000,00",
+            "Vlr. Atualizado": "R$ 14.319,90",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2024-10-04",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Deborah Priscila",
+            "Título": "Cheques",
+            "Vencimento": "2023-06-21",
+            "Prescrição/Ex.": "3026-10-30",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 1.650,00",
+            "Vlr. Débito": "R$ 1.650,00",
+            "Vlr. Atualizado": "R$ 2.301,24",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2023-10-30",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "Antonio Mendes",
+            "Título": "Cheques",
+            "Vencimento": "2024-02-20",
+            "Prescrição/Ex.": "2027-03-08",
+            "Ação": "Locupletamento",
+            "Vlr. Original": "R$ 3.000,00",
+            "Vlr. Débito": "R$ 3.000,00",
+            "Vlr. Atualizado": "R$ 3.865,85",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2024-03-08",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Wilson Araujo",
+            "Título": "Promissória",
+            "Vencimento": "2020-12-16",
+            "Prescrição/Ex.": "2024-07-21",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 11.000,00",
+            "Vlr. Débito": "R$ 11.000,00",
+            "Vlr. Atualizado": "R$ 23.047,13",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2021-07-21",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Sim",
+            "Devedor": "Erenilton/Wilson A.",
+            "Título": "Promissória",
+            "Vencimento": "2021-01-30",
+            "Prescrição/Ex.": "2024-07-21",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 3.600,00",
+            "Vlr. Débito": "R$ 3.600,00",
+            "Vlr. Atualizado": "R$ 7.340,05",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2021-07-21",
+            "Ajuizado": "Sim",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "L L Araujo",
+            "Título": "Cheques",
+            "Vencimento": "2021-03-16",
+            "Prescrição/Ex.": "2024-07-21",
+            "Ação": "Cobrança",
+            "Vlr. Original": "R$ 8.000,00",
+            "Vlr. Débito": "R$ 8.000,00",
+            "Vlr. Atualizado": "R$ 16.031,57",
+            "Protesto": "Sim",
+            "Dt. Protesto": "2021-07-21",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          },
+          {
+            "Cobrança": "Não",
+            "Devedor": "Alceu Rodrigues",
+            "Título": "Confissão",
+            "Vencimento": "2021-04-15",
+            "Prescrição/Ex.": "N/A",
+            "Ação": "Execução",
+            "Vlr. Original": "R$ 17.227,00",
+            "Vlr. Débito": "R$ 18.949,70",
+            "Vlr. Atualizado": "R$ 35.488,53",
+            "Protesto": "Sim",
+            "Dt. Protesto": "N/A",
+            "Ajuizado": "Não",
+            "Nº Processo": "N/A",
+            "Vara": "N/A",
+            "Comarca": "N/A"
+          }
+        ];
+        // --- [ FIM DOS DADOS EMBUTIDOS ] ---
+
         const allTabs = ['dashboard', 'tabela'];
-        // Variáveis globais para os dados e gráficos
-        let allData = [];
-        let dataLoaded = false;
+        let allData = []; // Esta variável será preenchida pela 'loadData'
         let chartInstances = {};
 
-        // Paleta de cores da BSC para os gráficos
-        const bscPalette = [
-            '#00332c', // Verde Escuro
-            '#c3a177', // Dourado
-            '#5a8f7b', // Verde Médio
-            '#333333', // Cinza Escuro
-            '#f0f0f0'  // Cinza Claro
-        ];
+        const bscPalette = ['#00332c', '#c3a177', '#5a8f7b', '#333333', '#8f8f8f'];
 
-        // --- Funções Auxiliares ---
-
-        // Converte "R$ 1.234,56" para o número 1234.56 para cálculos
+        // Converte "R$ 1.234,56" para o número 1234.56
         function parseCurrency(text) {
             if (!text) return 0;
             let num = String(text).replace('R$ ', '').replace(/\./g, '').replace(',', '.');
             return parseFloat(num) || 0;
         }
 
-        // Formata um número para "R$ 1.234,56"
+        // Converte o número 1234.56 para "R$ 1.234,56"
         function formatCurrency(num) {
             return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
-
-        // --- Funções Principais ---
-
-        // 1. Carrega e processa os dados do JSON
-        async function loadData() {
-            if (dataLoaded) return true; // Evita recarregar
-            
+        
+        // Função de carregar dados (agora processa a variável interna)
+        function loadData() {
             try {
-                // Requisito Técnico: Carregar dados dinamicamente
-                const response = await fetch('cobranca_data.json');
-                if (!response.ok) {
-                    throw new Error(`(404) Arquivo "cobranca_data.json" não encontrado.`);
-                }
-                const data = await response.json();
-                
-                // Processa os dados para cálculos
-                allData = data.map(item => ({
+                // Processa os dados da variável 'dadosDaPlanilha'
+                allData = dadosDaPlanilha.map(item => ({
                     ...item,
                     _valorAtualizadoNum: parseCurrency(item['Vlr. Atualizado'])
                 }));
-                
-                dataLoaded = true;
                 return true;
             } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                const errorMsg = `<p class="text-center p-10 text-red-600"><b>Erro ao carregar dados.</b><br>Verifique se o arquivo <b>cobranca_data.json</b> foi enviado para o repositório.</p>`;
+                console.error('Erro ao processar dados internos:', error);
+                const errorMsg = `<p class="text-center p-10 text-red-600"><b>Erro ao processar os dados.</b><br><small>${error.message}</small></p>`;
                 document.getElementById('tab-dashboard').innerHTML = errorMsg;
                 document.getElementById('tab-tabela').innerHTML = errorMsg;
                 return false;
             }
         }
 
-        // 2. Controla a troca de abas
+        // Controla a visibilidade das abas
         function showTab(tabId, clickedButton) {
-            // Esconde todos os painéis
             allTabs.forEach(id => {
                 document.getElementById(`tab-${id}`).classList.add('hidden');
             });
-            // Desativa todos os botões
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
 
-            // Mostra o painel e ativa o botão clicado
             document.getElementById(tabId).classList.remove('hidden');
             clickedButton.classList.add('active');
 
@@ -252,25 +428,21 @@
             }
         }
 
-        // 3. Renderiza o Dashboard (KPIs e Gráficos)
-        async function renderDashboard() {
-            if (!await loadData()) return;
+        // Desenha o conteúdo do Dashboard (KPIs e Gráficos)
+        function renderDashboard() {
             if (allData.length === 0) {
                 document.getElementById('tab-dashboard').innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado para exibir no dashboard.</p>';
                 return;
             }
 
-            // Requisito Funcional: Calcular KPIs
             const totalAtualizado = allData.reduce((sum, item) => sum + item._valorAtualizadoNum, 0);
             const totalCasos = allData.length;
             const totalAjuizado = allData.filter(d => d.Ajuizado === 'Sim').length;
 
-            // Atualizar HTML dos KPIs
             document.getElementById('kpi-valor-total').textContent = formatCurrency(totalAtualizado);
             document.getElementById('kpi-total-casos').textContent = totalCasos;
             document.getElementById('kpi-ajuizados').textContent = totalAjuizado;
 
-            // Preparar dados dos Gráficos
             const ajuizadoCounts = {};
             const acaoCounts = {};
             
@@ -281,15 +453,14 @@
                 acaoCounts[acao] = (acaoCounts[acao] || 0) + 1;
             });
 
-            // Renderizar Gráficos (Requisito Funcional)
             renderChart('ajuizadoChart', 'doughnut', Object.keys(ajuizadoCounts), Object.values(ajuizadoCounts));
             renderChart('acaoChart', 'doughnut', Object.keys(acaoCounts), Object.values(acaoCounts));
         }
 
-        // 4. Função genérica para criar/atualizar gráficos
+        // Desenha um gráfico
         function renderChart(canvasId, type, labels, data) {
             if (chartInstances[canvasId]) {
-                chartInstances[canvasId].destroy(); // Limpa gráfico antigo
+                chartInstances[canvasId].destroy();
             }
             const ctx = document.getElementById(canvasId).getContext('2d');
             chartInstances[canvasId] = new Chart(ctx, {
@@ -299,7 +470,7 @@
                     datasets: [{
                         label: 'Total de Casos',
                         data: data,
-                        backgroundColor: bscPalette, // Paleta de cores da BSC
+                        backgroundColor: bscPalette,
                         borderWidth: 1
                     }]
                 },
@@ -313,19 +484,15 @@
             });
         }
 
-        // 5. Renderiza a Tabela Detalhada
-        async function renderTabela() {
+        // Desenha a tabela detalhada
+        function renderTabela() {
             const container = document.getElementById('tabela-placeholder');
-            if (!dataLoaded) {
-                 container.innerHTML = '<p class="text-center p-10 text-gray-500">Carregando dados...</p>';
-                 if (!await loadData()) return; 
-            }
             if (allData.length === 0) {
                 container.innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado encontrado no arquivo.</p>';
                 return;
             }
 
-            // Requisito Funcional: Renderizar tabela
+            // Pega os cabeçalhos (exceto a coluna interna '_valorAtualizadoNum')
             const headers = Object.keys(allData[0]).filter(h => !h.startsWith('_'));
             let tableHtml = '<table class="cobranca-table">';
             
@@ -335,7 +502,6 @@
 
             tableHtml += '<tbody>';
             allData.forEach(item => {
-                // Requisito Funcional: Destaques em verde/vermelho
                 const cobrancaClass = item['Cobrança'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
                 const ajuizadoClass = item['Ajuizado'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
                 tableHtml += '<tr>';
@@ -358,21 +524,29 @@
             container.innerHTML = tableHtml;
         }
 
-        // 6. Configura os cliques nas abas (forma robusta)
+        // Adiciona os "ouvintes" de clique aos botões
         document.addEventListener('DOMContentLoaded', () => {
-            const btnDashboard = document.getElementById('btn-dashboard');
-            const btnTabela = document.getElementById('btn-tabela');
+            // Carrega os dados da variável interna
+            if (loadData()) {
+                // Configura os botões
+                const btnDashboard = document.getElementById('btn-dashboard');
+                const btnTabela = document.getElementById('btn-tabela');
 
-            btnDashboard.addEventListener('click', () => {
-                showTab('dashboard', btnDashboard);
-            });
-            
-            btnTabela.addEventListener('click', () => {
-                showTab('tabela', btnTabela);
-            });
+                if (btnDashboard && btnTabela) {
+                    btnDashboard.addEventListener('click', () => {
+                        showTab('dashboard', btnDashboard);
+                    });
+                    
+                    btnTabela.addEventListener('click', () => {
+                        showTab('tabela', btnTabela);
+                    });
 
-            // Carrega a aba inicial (Dashboard)
-            showTab('dashboard', btnDashboard);
+                    // Carrega a aba inicial (Dashboard)
+                    showTab('dashboard', btnDashboard);
+                } else {
+                    console.error("Botões das abas não encontrados!");
+                }
+            }
         });
     </script>
 
