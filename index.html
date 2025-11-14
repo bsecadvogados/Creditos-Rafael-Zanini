@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BSC Advogados - Painel de Cobrança</title>
+    <title>BSC Advogados - Painel Interativo de Cobrança</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -15,23 +14,31 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8f9fa; 
         }
-        h1, h2, h3 { font-family: 'Merriweather', serif; }
+        h1, h2, h3, .kpi-title { font-family: 'Merriweather', serif; }
         :root {
             --cor-verde-bsc: #00332c;
             --cor-dourado-bsc: #c3a177;
+            --cor-cinza-bsc: #f0f0f0;
         }
-        .tab-button {
-            transition: all 0.3s ease;
-            border-bottom-width: 4px;
-            border-color: transparent;
-            color: #6b7280;
-            cursor: pointer;
-        }
-        .tab-button.active {
-            font-weight: 600;
+        
+        /* Estilo dos Botões de Filtro */
+        .filter-button {
+            transition: all 0.2s ease;
+            border: 2px solid var(--cor-verde-bsc);
             color: var(--cor-verde-bsc);
-            border-color: var(--cor-dourado-bsc);
+            padding: 6px 14px;
+            border-radius: 99px; /* Pílula */
+            font-weight: 600;
         }
+        .filter-button:hover {
+            background-color: var(--cor-cinza-bsc);
+        }
+        .filter-button.active {
+            background-color: var(--cor-verde-bsc);
+            color: white;
+        }
+
+        /* Container dos Gráficos */
         .chart-container {
             position: relative;
             width: 100%;
@@ -40,6 +47,8 @@
             margin-left: auto;
             margin-right: auto;
         }
+
+        /* Estilos da tabela */
         .cobranca-table {
             width: 100%;
             border-collapse: collapse;
@@ -78,60 +87,76 @@
         <header class="flex flex-col md:flex-row justify-between items-center mb-6 pb-6 border-b-2" style="border-color: var(--cor-dourado-bsc);">
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold" style="color: var(--cor-verde-bsc);">
-                    Painel de Cobrança
+                    Painel Interativo de Cobrança
                 </h1>
                 <p class="text-xl text-gray-600">BSC Advogados e Associados</p>
             </div>
             <img src="BSC-1.jpg" alt="Logo BSC Advogados" class="w-48 h-auto mt-4 md:mt-0">
         </header>
-
-        <nav class="mb-10">
-            <div class="flex justify-center border-b border-gray-300">
-                <button id="btn-dashboard" class="tab-button active py-3 px-6 text-lg">
-                    Dashboard (Resumo)
-                </button>
-                <button id="btn-tabela" class="tab-button py-3 px-6 text-lg">
-                    Tabela Detalhada
-                </button>
+        
+        <!-- KPIs (Indicadores) -->
+        <section id="kpi-section" class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <div class="bg-white p-5 rounded-xl shadow-lg text-center">
+                <h3 class="kpi-title text-lg font-semibold text-gray-600 mb-1">Valor Total Atualizado</h3>
+                <p class="text-3xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-valor-total">R$ 0,00</p>
             </div>
-        </nav>
+            <div class="bg-white p-5 rounded-xl shadow-lg text-center">
+                <h3 class="kpi-title text-lg font-semibold text-gray-600 mb-1">Total de Devedores</h3>
+                <p class="text-3xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-total-casos">0</p>
+            </div>
+            <div class="bg-white p-5 rounded-xl shadow-lg text-center">
+                <h3 class="kpi-title text-lg font-semibold text-gray-600 mb-1">Casos Ajuizados</h3>
+                <p class="text-3xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-ajuizados">0</p>
+            </div>
+             <div class="bg-white p-5 rounded-xl shadow-lg text-center">
+                <h3 class="kpi-title text-lg font-semibold text-gray-600 mb-1">Taxa de Ajuizamento</h3>
+                <p class="text-3xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-taxa-ajuizamento">0%</p>
+            </div>
+        </section>
+        
+        <!-- Filtros Interativos -->
+        <section id="filter-section" class="bg-white p-4 rounded-xl shadow-lg mb-8">
+            <div class="flex flex-wrap items-center gap-x-6 gap-y-4">
+                <h3 class="text-lg font-bold" style="color: var(--cor-verde-bsc);">FILTRAR POR:</h3>
+                
+                <!-- Filtro Ajuizado -->
+                <div class="flex items-center gap-2" data-filter-group="ajuizado">
+                    <span class="font-semibold text-gray-700">Ajuizado:</span>
+                    <button class="filter-button active" data-filter-value="todos">Todos</button>
+                    <button class="filter-button" data-filter-value="Sim">Sim</button>
+                    <button class="filter-button" data-filter-value="Não">Não</button>
+                </div>
+                
+                <!-- Filtro Cobrança -->
+                <div class="flex items-center gap-2" data-filter-group="cobranca">
+                    <span class="font-semibold text-gray-700">Cobrança:</span>
+                    <button class="filter-button active" data-filter-value="todos">Todos</button>
+                    <button class="filter-button" data-filter-value="Sim">Sim</button>
+                    <button class="filter-button" data-filter-value="Não">Não</button>
+                </div>
+            </div>
+        </section>
 
         <main>
-            <div id="tab-dashboard" class="tab-content space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h3 class="text-2xl font-semibold text-gray-700 mb-2">Valor Total (Atualizado)</h3>
-                        <p class="text-4xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-valor-total">R$ 0,00</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h3 class="text-2xl font-semibold text-gray-700 mb-2">Total de Devedores</h3>
-                        <p class="text-4xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-total-casos">0</p>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg text-center">
-                        <h3 class="text-2xl font-semibold text-gray-700 mb-2">Casos Ajuizados</h3>
-                        <p class="text-4xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-ajuizados">0</p>
+            <!-- Gráficos -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Tipos de Ação</h2>
+                    <div class="chart-container">
+                        <canvas id="acaoChart"></canvas>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Status de Ajuizamento</h2>
-                        <div class="chart-container">
-                            <canvas id="ajuizadoChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Tipos de Ação</h2>
-                        <div class="chart-container">
-                            <canvas id="acaoChart"></canvas>
-                        </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Status de Protesto</h2>
+                    <div class="chart-container">
+                        <canvas id="protestoChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <div id="tab-tabela" class="tab-content hidden">
-                <p class="text-center text-gray-600 mb-6 max-w-2xl mx-auto">
-                    Abaixo está o status detalhado das ações de cobrança em andamento.
-                </p>
+            <!-- Tabela Detalhada -->
+            <div class="mt-12">
+                <h2 class="text-3xl font-bold mb-4" style="color: var(--cor-verde-bsc);">Tabela Detalhada</h2>
                 <div class="table-container bg-white">
                     <div id="tabela-placeholder">
                         <p class="text-center p-10 text-gray-500">Carregando dados...</p>
@@ -139,14 +164,15 @@
                 </div>
             </div>
         </main>
-
     </div>
 
+    <!-- Carrega o Chart.js no final do body -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script>
-        // --- [ ESTA É A CORREÇÃO PRINCIPAL ] ---
-        // Os dados da sua planilha (o JSON) estão agora DENTRO do JavaScript.
-        // Não precisamos mais de 'fetch()' ou 'cobranca_data.json'.
-        // ESTA É A VERSÃO COMPLETA QUE NÃO FOI CORTADA.
+        // --- [ DADOS DA PLANILHA EMBUTIDOS AQUI ] ---
+        // Isto elimina a necessidade de um .json separado e corrige
+        // todos os problemas de cache e 'file://'.
         const dadosDaPlanilha = [
           {
             "Cobrança": "Sim",
@@ -372,92 +398,126 @@
         ];
         // --- [ FIM DOS DADOS EMBUTIDOS ] ---
 
-        const allTabs = ['dashboard', 'tabela'];
-        let allData = []; // Esta variável será preenchida pela 'loadData'
-        let chartInstances = {};
+        let allData = []; // Para guardar os dados processados
+        let chartInstances = {}; // Para guardar os objetos dos gráficos
+        let currentFilters = { ajuizado: 'todos', cobranca: 'todos' }; // Estado dos filtros
 
         const bscPalette = ['#00332c', '#c3a177', '#5a8f7b', '#333333', '#8f8f8f'];
 
-        // Converte "R$ 1.234,56" para o número 1234.56
+        // Funções de ajuda (Helpers)
         function parseCurrency(text) {
             if (!text) return 0;
             let num = String(text).replace('R$ ', '').replace(/\./g, '').replace(',', '.');
             return parseFloat(num) || 0;
         }
 
-        // Converte o número 1234.56 para "R$ 1.234,56"
         function formatCurrency(num) {
             return num.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
         
-        // Função de carregar dados (agora processa a variável interna)
-        function loadData() {
+        // Função principal que roda tudo
+        function runDashboard() {
             try {
-                // Processa os dados da variável 'dadosDaPlanilha'
+                // 1. Processa os dados da variável interna
                 allData = dadosDaPlanilha.map(item => ({
                     ...item,
                     _valorAtualizadoNum: parseCurrency(item['Vlr. Atualizado'])
                 }));
-                return true;
-            } catch (error) {
-                console.error('Erro ao processar dados internos:', error);
-                const errorMsg = `<p class="text-center p-10 text-red-600"><b>Erro ao processar os dados.</b><br><small>${error.message}</small></p>`;
-                document.getElementById('tab-dashboard').innerHTML = errorMsg;
-                document.getElementById('tab-tabela').innerHTML = errorMsg;
-                return false;
-            }
-        }
-
-        // Controla a visibilidade das abas
-        function showTab(tabId, clickedButton) {
-            allTabs.forEach(id => {
-                document.getElementById(`tab-${id}`).classList.add('hidden');
-            });
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-
-            document.getElementById(tabId).classList.remove('hidden');
-            clickedButton.classList.add('active');
-
-            // Renderiza o conteúdo da aba específica
-            if (tabId === 'dashboard') {
+                
+                // 2. Configura os botões de filtro
+                setupFilters();
+                
+                // 3. Renderiza o dashboard inicial
                 renderDashboard();
-            } else if (tabId === 'tabela') {
-                renderTabela();
+                
+            } catch (error) {
+                console.error("Erro ao inicializar o dashboard:", error);
+                document.body.innerHTML = `<p class="text-center p-10 text-red-600"><b>Erro fatal:</b> ${error.message}. Verifique o console.</p>`;
             }
         }
 
-        // Desenha o conteúdo do Dashboard (KPIs e Gráficos)
-        function renderDashboard() {
-            if (allData.length === 0) {
-                document.getElementById('tab-dashboard').innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado para exibir no dashboard.</p>';
-                return;
-            }
+        // Configura os cliques dos botões de filtro
+        function setupFilters() {
+            const filterGroups = document.querySelectorAll('[data-filter-group]');
+            filterGroups.forEach(group => {
+                const groupName = group.dataset.filterGroup;
+                const buttons = group.querySelectorAll('.filter-button');
+                
+                buttons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        // Atualiza o estado do filtro
+                        currentFilters[groupName] = button.dataset.filterValue;
+                        
+                        // Atualiza a aparência dos botões
+                        buttons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+                        
+                        // Re-renderiza o dashboard com os novos filtros
+                        renderDashboard();
+                    });
+                });
+            });
+        }
 
-            const totalAtualizado = allData.reduce((sum, item) => sum + item._valorAtualizadoNum, 0);
-            const totalCasos = allData.length;
-            const totalAjuizado = allData.filter(d => d.Ajuizado === 'Sim').length;
+        // Função que aplica filtros e re-renderiza tudo
+        function renderDashboard() {
+            if (allData.length === 0) return;
+
+            // 1. Aplicar filtros
+            const filteredData = allData.filter(item => {
+                const matchAjuizado = (currentFilters.ajuizado === 'todos') || (item.Ajuizado === currentFilters.ajuizado);
+                const matchCobranca = (currentFilters.cobranca === 'todos') || (item.Cobrança === currentFilters.cobranca);
+                return matchAjuizado && matchCobranca;
+            });
+
+            // 2. Atualizar KPIs com dados filtrados
+            updateKPIs(filteredData);
+            
+            // 3. Atualizar Gráficos com dados filtrados
+            renderCharts(filteredData);
+            
+            // 4. Atualizar Tabela com dados filtrados
+            renderTabela(filteredData);
+        }
+
+        // Atualiza os KPIs
+        function updateKPIs(data) {
+            const totalAtualizado = data.reduce((sum, item) => sum + item._valorAtualizadoNum, 0);
+            const totalCasos = data.length;
+            const totalAjuizado = data.filter(d => d.Ajuizado === 'Sim').length;
+            const taxaAjuizamento = (totalCasos > 0) ? (totalAjuizado / totalCasos) * 100 : 0;
 
             document.getElementById('kpi-valor-total').textContent = formatCurrency(totalAtualizado);
             document.getElementById('kpi-total-casos').textContent = totalCasos;
             document.getElementById('kpi-ajuizados').textContent = totalAjuizado;
+            document.getElementById('kpi-taxa-ajuizamento').textContent = `${taxaAjuizamento.toFixed(0)}%`;
+        }
 
-            const ajuizadoCounts = {};
+        // Desenha/Atualiza os gráficos
+        function renderCharts(data) {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js não foi carregado.');
+                return;
+            }
+
+            // Dados do Gráfico de Ação
             const acaoCounts = {};
-            
-            allData.forEach(item => {
-                const ajuizado = item.Ajuizado || 'N/A';
-                ajuizadoCounts[ajuizado] = (ajuizadoCounts[ajuizado] || 0) + 1;
+            data.forEach(item => {
                 const acao = item.Ação || 'N/A';
                 acaoCounts[acao] = (acaoCounts[acao] || 0) + 1;
             });
-
-            renderChart('ajuizadoChart', 'doughnut', Object.keys(ajuizadoCounts), Object.values(ajuizadoCounts));
             renderChart('acaoChart', 'doughnut', Object.keys(acaoCounts), Object.values(acaoCounts));
+
+            // Dados do Gráfico de Protesto
+            const protestoCounts = {};
+            data.forEach(item => {
+                const protesto = item.Protesto || 'N/A';
+                protestoCounts[protesto] = (protestoCounts[protesto] || 0) + 1;
+            });
+            renderChart('protestoChart', 'doughnut', Object.keys(protestoCounts), Object.values(protestoCounts));
         }
 
-        // Desenha um gráfico
+        // Função genérica para criar/atualizar um gráfico
         function renderChart(canvasId, type, labels, data) {
             if (chartInstances[canvasId]) {
                 chartInstances[canvasId].destroy();
@@ -471,7 +531,8 @@
                         label: 'Total de Casos',
                         data: data,
                         backgroundColor: bscPalette,
-                        borderWidth: 1
+                        borderWidth: 1,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
@@ -484,16 +545,15 @@
             });
         }
 
-        // Desenha a tabela detalhada
-        function renderTabela() {
+        // Desenha/Atualiza a tabela detalhada
+        function renderTabela(data) {
             const container = document.getElementById('tabela-placeholder');
-            if (allData.length === 0) {
-                container.innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado encontrado no arquivo.</p>';
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado encontrado para estes filtros.</p>';
                 return;
             }
 
-            // Pega os cabeçalhos (exceto a coluna interna '_valorAtualizadoNum')
-            const headers = Object.keys(allData[0]).filter(h => !h.startsWith('_'));
+            const headers = Object.keys(data[0]).filter(h => !h.startsWith('_'));
             let tableHtml = '<table class="cobranca-table">';
             
             tableHtml += '<thead><tr>';
@@ -501,7 +561,7 @@
             tableHtml += '</tr></thead>';
 
             tableHtml += '<tbody>';
-            allData.forEach(item => {
+            data.forEach(item => {
                 const cobrancaClass = item['Cobrança'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
                 const ajuizadoClass = item['Ajuizado'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
                 tableHtml += '<tr>';
@@ -524,30 +584,11 @@
             container.innerHTML = tableHtml;
         }
 
-        // Adiciona os "ouvintes" de clique aos botões
-        document.addEventListener('DOMContentLoaded', () => {
-            // Carrega os dados da variável interna
-            if (loadData()) {
-                // Configura os botões
-                const btnDashboard = document.getElementById('btn-dashboard');
-                const btnTabela = document.getElementById('btn-tabela');
-
-                if (btnDashboard && btnTabela) {
-                    btnDashboard.addEventListener('click', () => {
-                        showTab('dashboard', btnDashboard);
-                    });
-                    
-                    btnTabela.addEventListener('click', () => {
-                        showTab('tabela', btnTabela);
-                    });
-
-                    // Carrega a aba inicial (Dashboard)
-                    showTab('dashboard', btnDashboard);
-                } else {
-                    console.error("Botões das abas não encontrados!");
-                }
-            }
-        });
+        // Espera a página inteira carregar (incluindo o script do Chart.js)
+        // antes de tentar executar qualquer código.
+        window.onload = function() {
+            runDashboard();
+        };
     </script>
 
 </body>
