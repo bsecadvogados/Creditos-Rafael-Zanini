@@ -15,30 +15,23 @@
             font-family: 'Inter', sans-serif;
             background-color: #f8f9fa; 
         }
-        
-        h1, h2, h3 {
-            font-family: 'Merriweather', serif;
-        }
-
+        h1, h2, h3 { font-family: 'Merriweather', serif; }
         :root {
             --cor-verde-bsc: #00332c;
             --cor-dourado-bsc: #c3a177;
         }
-
-        /* Estilo das Abas */
         .tab-button {
             transition: all 0.3s ease;
             border-bottom-width: 4px;
             border-color: transparent;
             color: #6b7280;
+            cursor: pointer; /* Adiciona o cursor de "mãozinha" */
         }
         .tab-button.active {
             font-weight: 600;
             color: var(--cor-verde-bsc);
             border-color: var(--cor-dourado-bsc);
         }
-
-        /* Container dos Gráficos */
         .chart-container {
             position: relative;
             width: 100%;
@@ -47,8 +40,6 @@
             margin-left: auto;
             margin-right: auto;
         }
-
-        /* Estilos da tabela */
         .cobranca-table {
             width: 100%;
             border-collapse: collapse;
@@ -95,10 +86,10 @@
 
         <nav class="mb-10">
             <div class="flex justify-center border-b border-gray-300">
-                <button id="btn-dashboard" class="tab-button active py-3 px-6 text-lg" onclick="showTab('dashboard', this)">
+                <button id="btn-dashboard" class="tab-button active py-3 px-6 text-lg">
                     Dashboard (Resumo)
                 </button>
-                <button id="btn-tabela" class="tab-button py-3 px-6 text-lg" onclick="showTab('tabela', this)">
+                <button id="btn-tabela" class="tab-button py-3 px-6 text-lg">
                     Tabela Detalhada
                 </button>
             </div>
@@ -120,7 +111,6 @@
                         <p class="text-4xl font-bold" style="color: var(--cor-verde-bsc);" id="kpi-ajuizados">0</p>
                     </div>
                 </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-white p-6 rounded-xl shadow-lg">
                         <h2 class="text-2xl font-semibold text-center mb-4" style="color: var(--cor-verde-bsc);">Status de Ajuizamento</h2>
@@ -161,7 +151,7 @@
 
         function parseCurrency(text) {
             if (!text) return 0;
-            let num = text.replace('R$ ', '').replace(/\./g, '').replace(',', '.');
+            let num = String(text).replace('R$ ', '').replace(/\./g, '').replace(',', '.');
             return parseFloat(num) || 0;
         }
 
@@ -171,26 +161,21 @@
 
         async function loadData() {
             if (dataLoaded) return true;
-            
             try {
-                // VERIFIQUE: O nome do arquivo deve ser "cobranca_data.json"
                 const response = await fetch('cobranca_data.json');
                 if (!response.ok) {
                     throw new Error(`(404) Arquivo "cobranca_data.json" não encontrado.`);
                 }
                 const data = await response.json();
-                
                 allData = data.map(item => ({
                     ...item,
                     _valorAtualizadoNum: parseCurrency(item['Vlr. Atualizado'])
                 }));
-                
                 dataLoaded = true;
                 return true;
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                // [CORREÇÃO] Mensagem de erro mais clara
-                const errorMsg = `<p class="text-center p-10 text-red-600"><b>Erro ao carregar dados.</b><br>Verifique se o arquivo <b>cobranca_data.json</b> foi enviado para o repositório e tem o nome exato.</p>`;
+                const errorMsg = `<p class="text-center p-10 text-red-600"><b>Erro ao carregar dados.</b><br>Verifique se o arquivo <b>cobranca_data.json</b> foi enviado para o repositório.</p>`;
                 document.getElementById('tab-dashboard').innerHTML = errorMsg;
                 document.getElementById('tab-tabela').innerHTML = errorMsg;
                 return false;
@@ -206,7 +191,9 @@
             });
 
             document.getElementById(tabId).classList.remove('hidden');
-            clickedButton.classList.add('active');
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
 
             if (tabId === 'dashboard') {
                 renderDashboard();
@@ -217,6 +204,10 @@
 
         async function renderDashboard() {
             if (!await loadData()) return;
+            if (allData.length === 0) { // Se não houver dados, mostre uma mensagem
+                document.getElementById('tab-dashboard').innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado para exibir no dashboard.</p>';
+                return;
+            }
 
             const totalAtualizado = allData.reduce((sum, item) => sum + item._valorAtualizadoNum, 0);
             const totalCasos = allData.length;
@@ -224,100 +215,4 @@
 
             document.getElementById('kpi-valor-total').textContent = formatCurrency(totalAtualizado);
             document.getElementById('kpi-total-casos').textContent = totalCasos;
-            document.getElementById('kpi-ajuizados').textContent = totalAjuizado;
-
-            const ajuizadoCounts = {};
-            const acaoCounts = {};
-            
-            allData.forEach(item => {
-                const ajuizado = item.Ajuizado || 'N/A';
-                ajuizadoCounts[ajuizado] = (ajuizadoCounts[ajuizado] || 0) + 1;
-                
-                const acao = item.Ação || 'N/A';
-                acaoCounts[acao] = (acaoCounts[acao] || 0) + 1;
-            });
-
-            renderChart('ajuizadoChart', 'doughnut', Object.keys(ajuizadoCounts), Object.values(ajuizadoCounts));
-            renderChart('acaoChart', 'doughnut', Object.keys(acaoCounts), Object.values(acaoCounts));
-        }
-
-        function renderChart(canvasId, type, labels, data) {
-            if (chartInstances[canvasId]) {
-                chartInstances[canvasId].destroy();
-            }
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            chartInstances[canvasId] = new Chart(ctx, {
-                type: type,
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total de Casos',
-                        data: data,
-                        backgroundColor: bscPalette,
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' }
-                    }
-                }
-            });
-        }
-
-        async function renderTabela() {
-            const container = document.getElementById('tabela-placeholder');
-            if (!dataLoaded) {
-                 container.innerHTML = '<p class="text-center p-10 text-gray-500">Carregando dados...</p>';
-                 if (!await loadData()) return; // Erro já tratado em loadData
-            }
-
-            // --- [ CORREÇÃO ESTÁ AQUI ] ---
-            // Adiciona uma verificação para o caso de o JSON estar vazio
-            if (allData.length === 0) {
-                container.innerHTML = '<p class="text-center p-10 text-gray-500">Nenhum dado encontrado no arquivo.</p>';
-                return;
-            }
-            // --- [ FIM DA CORREÇÃO ] ---
-
-            const headers = Object.keys(allData[0]).filter(h => !h.startsWith('_'));
-            let tableHtml = '<table class="cobranca-table">';
-            
-            tableHtml += '<thead><tr>';
-            headers.forEach(header => tableHtml += `<th>${header}</th>`);
-            tableHtml += '</tr></thead>';
-
-            tableHtml += '<tbody>';
-            allData.forEach(item => {
-                const cobrancaClass = item['Cobrança'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
-                const ajuizadoClass = item['Ajuizado'] === 'Sim' ? 'text-green-700 font-semibold' : 'text-red-700';
-
-                tableHtml += '<tr>';
-                headers.forEach(header => {
-                    let value = item[header] || 'N/A';
-                    if (header === 'Cobrança') {
-                        tableHtml += `<td class="${cobrancaClass}">${value}</td>`;
-                    } else if (header === 'Ajuizado') {
-                        tableHtml += `<td class="${ajuizadoClass}">${value}</td>`;
-                    } else if (header.startsWith('Vlr.')) {
-                        tableHtml += `<td class="font-medium text-gray-900">${value}</td>`;
-                    } else {
-                        tableHtml += `<td>${value}</td>`;
-                    }
-                });
-                tableHtml += '</tr>';
-            });
-            tableHtml += '</tbody></table>';
-
-            container.innerHTML = tableHtml;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            showTab('dashboard', document.getElementById('btn-dashboard'));
-        });
-    </script>
-
-</body>
-</html>
+            document.getElementById('kpi-ajuizados').textContent = totalAjuizado
